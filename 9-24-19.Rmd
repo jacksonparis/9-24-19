@@ -15,16 +15,39 @@ library(knitr)
 library(readxl)
 library(janitor)
 
-enrollment <- read_xlsx("class_enrollment_summary_by_term_9.24.19.xlsx", skip = 3)
+enrollment_9_24 <- read_xlsx("class_enrollment_summary_by_term_9.24.19.xlsx", skip = 3)
 
 ```
 
 ```{r}
-enrollment %>%
-  clean_names() %>%
+enrollment_9_24_clean <- 
+  enrollment_9_24 %>%
+  clean_names() 
+
+enrollment_9_17_clean %>%
   filter(course_department == "Government") %>%
   arrange(desc(total)) %>%
-  select(course_title, course_name, course_department, total) %>%
-  head(4)
+  select(course_title, course_name, course_department, total, u_grad, grad) %>%
+  head(6)
+```
+
+```{r}
+enrollment_9_17 <- read_xlsx("class_enrollment_summary_by_term_9.17.19.xlsx", skip = 3)
+```
+
+```{r}
+enrollment_9_17_clean <- enrollment_9_17 %>% clean_names()
+```
+
+```{r}
+difference_enroll <-
+enrollment_9_17_clean %>% 
+  inner_join(enrollment_9_24_clean, by = c("course_name"), suffix = c("_9_17", "_9_24")) %>%
+  select(course_name, course_title_9_17, total_9_17, total_9_24) %>%
+  mutate(difference = total_9_24 - total_9_17) %>%
+  arrange(difference) %>%
+  distinct(course_name, course_title_9_17, difference)
+  
+difference_enroll
 ```
 
