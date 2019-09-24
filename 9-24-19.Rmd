@@ -1,0 +1,30 @@
+---
+title: "9-24-19"
+author: "Jackson Kehoe"
+date: "9/24/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(knitr)
+library(readxl)
+library(janitor)
+
+enrollment <- read_xlsx("class_enrollment_summary_by_term_9.24.19.xlsx", skip = 3)
+
+```
+
+```{r}
+enrollment %>%
+  clean_names() %>%
+  filter(course_department == "Government") %>%
+  arrange(desc(total)) %>%
+  select(course_title, course_name, course_department, total) %>%
+  head(4)
+```
+
